@@ -1,6 +1,6 @@
 Gem::Specification.new do |spec|
   spec.name = 'hubrise_initializer'
-  spec.version = '0.1.0'
+  spec.version = '0.1.1'
   spec.files = ["lib/hubrise_initializer.rb"]
 
   spec.authors = ["Antoine Monnier"]

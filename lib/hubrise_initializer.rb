@@ -1,3 +1,6 @@
+require 'lograge'
+require 'act-fluent-logger-rails'
+
 class HubriseInitializer
   def self.configure(config, *initializers)
     initializers.each do |initializer|

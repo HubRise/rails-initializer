@@ -58,6 +58,7 @@ class HubriseInitializer
 
       config.lograge.custom_payload do |controller|
         {
+            release: ENV['RELEASE'],
             host: controller.request.host,
             ip: controller.request.ip,
             user_agent: controller.request.user_agent

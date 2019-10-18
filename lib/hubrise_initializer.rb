@@ -20,6 +20,10 @@ class HubriseInitializer
   private
 
   def self.configure_logger(config)
+    if log_level = ENV['RAILS_LOG_LEVEL']
+      config.log_level = log_level
+    end
+
     case ENV['RAILS_LOGGER']
     when 'stdout'
       # Log to STDOUT (docker-compose)

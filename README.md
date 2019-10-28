@@ -1,4 +1,4 @@
-# HubriseInitializer
+# Rails initializer
 
 Default initializations common to HubRise projects.
 
@@ -9,7 +9,7 @@ Add this line to your application's `Gemfile`:
 gem 'hubrise_initializer'
 ```
 
-Add this line to `config/application.rb`:
+In `config/application.rb`:
 ```
 HubriseInitializer.configure(:logger, :delayed_job_logger, :web_console)
 ```
@@ -37,9 +37,9 @@ The following environment variables can be used:
 
 To upload the latest version to RubyGems.org:
 
-1. Increase version
+1. Increase version in `hubrise_initializer.gemspec`
 
-2. Build & publish:
+2. Build & publish - `cd` to the repository main folder then: 
 
 ```bash
 rm hubrise_initializer-*.gem

@@ -1,6 +1,10 @@
+$LOAD_PATH.push File.expand_path("lib", __dir__)
+
+require "hubrise_initializer/version"
+
 Gem::Specification.new do |spec|
   spec.name = 'hubrise_initializer'
-  spec.version = '0.2.0'
+  spec.version = HubriseInitializer::VERSION
 
   spec.require_paths = ['lib']
   spec.files = Dir.chdir(File.expand_path('..', __FILE__)) do

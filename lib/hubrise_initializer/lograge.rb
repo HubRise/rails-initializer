@@ -1,5 +1,3 @@
-require_relative '../hubrise_initializer'
-
 class HubriseInitializer
   class Lograge
     class << self

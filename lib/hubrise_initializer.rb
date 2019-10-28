@@ -1,6 +1,9 @@
 require 'lograge'
 require 'act-fluent-logger-rails'
 
+require 'hubrise_initializer/version'
+require 'hubrise_initializer/lograge'
+
 class HubriseInitializer
   class << self
     def configure(*initializers)
@@ -43,6 +46,7 @@ class HubriseInitializer
           config.lograge.custom_payload { |controller| HubriseInitializer::Lograge.custom_payload(controller) }
 
           if ENV['RAILS_LOGRAGE_SQL'] == 'true'
+            require 'lograge/sql'
             require 'lograge/sql/extension'
           end
 

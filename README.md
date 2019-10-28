@@ -40,12 +40,12 @@ The following environment variables can be used only when`ENV['RAILS_LOGGER'] ==
 
 To upload the latest version to RubyGems.org:
 
-1. Increase version in `hubrise_initializer.gemspec`
+1. Increase version in `lib/hubrise_initializer/version.rb`
 
 2. Build & publish - `cd` to the repository main folder then: 
 
 ```bash
-rm hubrise_initializer-*.gem
+rm -f hubrise_initializer-*.gem
 gem build hubrise_initializer
 gem push hubrise_initializer-*.gem
 ``` 

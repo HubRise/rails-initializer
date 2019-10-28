@@ -17,7 +17,7 @@ class HubriseInitializer
             if ENV['RAILS_LOGRAGE_QUERY'] == 'true'
               {
                   request_headers: process_request_headers(request).to_s,
-                  request_body: truncate_body(request.raw_post),
+                  request_body: truncate_body(request.raw_post.dup.force_encoding(Encoding::UTF_8)),
                   response_headers: response.headers.to_h.to_s,
                   response_body: truncate_body(response.body),
               }

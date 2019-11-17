@@ -18,6 +18,6 @@ Gem::Specification.new do |spec|
 
   spec.add_runtime_dependency 'lograge', '~> 0.11'
   spec.add_runtime_dependency 'lograge-sql', '~>1.1'
-  spec.add_runtime_dependency 'act-fluent-logger-rails', '~> 0.5'
+  spec.add_runtime_dependency 'hubrise-act-fluent-logger-rails', '~> 0.5'
   spec.add_runtime_dependency 'logstash-event', '~> 1.2'
 end

@@ -17,9 +17,9 @@ class HubriseInitializer
             if ENV['RAILS_LOGRAGE_QUERY'] == 'true'
               {
                   request_headers: process_request_headers(request).to_s,
-                  request_body: truncate_body(switch_to_utf8(request.raw_post, "Binary (#{request.raw_post.size} bytes)")),
+                  request_body: truncate_body(switch_to_utf8(request.raw_post)),
                   response_headers: response.headers.to_h.to_s,
-                  response_body: truncate_body(response.body),
+                  response_body: truncate_body(switch_to_utf8(response.body))
               }
             else
               {}
@@ -31,12 +31,17 @@ class HubriseInitializer
 
       TRUNCATED_BODY_MAX_LENGTH = 1000
 
-      # Switch string encoding to utf-8. Return fallback if not a valid utf-8 sequence.
-      def switch_to_utf8(s, fallback)
+      # Attempt to switch string encoding to utf-8. Return fallback if not a valid utf-8 sequence.
+      def switch_to_utf8(s)
+        return if !s
+
+        return s if s.encoding == Encoding::UTF_8
+
         s_utf_8 = s.dup.force_encoding(Encoding::UTF_8)
-        s_utf_8.valid_encoding? ?
-            s_utf_8 :
-            fallback
+        return s_utf_8 if s_utf_8.valid_encoding?
+
+        # Fallback for binary data
+        return "Binary (#{s.size} bytes)"
       end
 
       def truncate_body(s)

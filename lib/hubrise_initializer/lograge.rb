@@ -3,7 +3,8 @@ class HubriseInitializer
     class << self
       def custom_options(event)
         {
-            time_test: Time.now
+            time_test: Time.now,
+            event: event.inspect
         }
       end
 

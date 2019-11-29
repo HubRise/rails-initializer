@@ -2,7 +2,9 @@ class HubriseInitializer
   class Lograge
     class << self
       def custom_options(event)
-        {}
+        {
+            time_test: Time.now
+        }
       end
 
       def custom_payload(controller)

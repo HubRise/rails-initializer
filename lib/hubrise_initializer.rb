@@ -38,7 +38,6 @@ class HubriseInitializer
           config.logger = ActFluentLoggerRails::Logger.new
 
           config.lograge.enabled = true
-          config.lograge.formatter = ::Lograge::Formatters::Logstash.new
           config.lograge.formatter = ::Lograge::Formatters::Json.new
 
           config.lograge.ignore_actions = ["HealthCheck::HealthCheckController#index"]

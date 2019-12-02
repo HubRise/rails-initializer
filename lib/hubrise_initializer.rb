@@ -30,7 +30,7 @@ class HubriseInitializer
         case ENV['RAILS_LOGGER']
         when 'stdout'
           # Log to STDOUT (docker-compose)
-          config.logger = Logger.new(STDOUT)
+          config.logger = ActiveSupport::Logger.new(STDOUT)
 
         when 'fluentd'
           # Log to fluentd (kubernetes)
@@ -60,7 +60,7 @@ class HubriseInitializer
         case ENV['RAILS_LOGGER']
         when 'stdout'
           # Log to STDOUT (docker-compose)
-          Delayed::Worker.logger = Logger.new(STDOUT)
+          Delayed::Worker.logger = ActiveSupport::Logger.new(STDOUT)
 
         when 'fluentd'
           # Log to fluentd (kubernetes)
@@ -69,7 +69,7 @@ class HubriseInitializer
 
         else
           # Log to a file
-          Delayed::Worker.logger = Logger.new(File.join(Rails.root, 'log', 'delayed_job.log'))
+          Delayed::Worker.logger = ActiveSupport::Logger.new(File.join(Rails.root, 'log', 'delayed_job.log'))
         end
       end
     end

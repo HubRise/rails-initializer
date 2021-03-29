@@ -23,6 +23,8 @@ class HubriseInitializer
 
     def configure_logger
       Rails.application.configure do
+        config.lograge.base_controller_class = %w[ActionController::API ActionController::Base]
+
         if log_level = ENV['RAILS_LOG_LEVEL']
           config.log_level = log_level
         end

@@ -42,7 +42,15 @@ To upload the latest version to RubyGems.org:
 
 1. Increase version in `lib/hubrise_initializer/version.rb`
 
-2. Build & publish - `cd` to the repository main folder then: 
+2. Tag the repository:
+```bash
+VERSION=0.2.9 
+git commit -m "..."
+git tag v$VERSION
+git push --tags
+```
+
+3. Build & publish - `cd` to the repository main folder then: 
 
 ```bash
 rm -f hubrise_initializer-*.gem

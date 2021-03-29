@@ -40,13 +40,16 @@ The following environment variables can be used only when`ENV['RAILS_LOGGER'] ==
 
 To upload the latest version to RubyGems.org:
 
+0. Make sure all local changes are committed.
+
 1. Increase version in `lib/hubrise_initializer/version.rb`
 
 2. Tag the repository:
 ```bash
-VERSION=0.2.9 
-git commit -m "..."
+VERSION=0.2.9
+git add lib/hubrise_initializer/version.rb
 git tag v$VERSION
+git commit -m "Version $VERSION"
 git push --tags
 ```
 

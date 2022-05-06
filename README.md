@@ -48,8 +48,8 @@ To upload the latest version to RubyGems.org:
 ```bash
 VERSION=1.0.0
 git add lib/hubrise_initializer/version.rb
-git tag v$VERSION
 git commit -m "Version $VERSION"
+git tag v$VERSION
 git push --tags
 git push
 ```

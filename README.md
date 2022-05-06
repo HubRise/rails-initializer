@@ -46,11 +46,12 @@ To upload the latest version to RubyGems.org:
 
 2. Tag the repository:
 ```bash
-VERSION=0.2.9
+VERSION=1.0.0
 git add lib/hubrise_initializer/version.rb
 git tag v$VERSION
 git commit -m "Version $VERSION"
 git push --tags
+git push
 ```
 
 3. Build & publish - `cd` to the repository main folder then: 

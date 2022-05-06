@@ -1,3 +1,3 @@
 class HubriseInitializer
-  VERSION = "0.2.9".freeze
+  VERSION = "1.0.0".freeze
 end

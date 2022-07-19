@@ -1,15 +1,9 @@
 # frozen_string_literal: true
 source "https://rubygems.org"
 
-group :test do
-  gem "rails", "~> 6.0"
-  gem "rspec-rails", "~> 5.0"
-  gem "hubrise_initializer", path: "."
+gem "rails", "~> 6.0"
+gem "rspec-rails", "~> 5.0"
+gem "hubrise_initializer", path: "."
 
-  gem "webmock"
-
-  # gem "pry"
-  # gem "byebug"
-  # gem "debase"
-  # gem "ruby-debug-ide"
-end
+gem "rubocop", "0.81.0"
+gem "webmock"

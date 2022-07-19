@@ -1,8 +1,4 @@
 # frozen_string_literal: true
-
-require "rails"
-require "action_controller/railtie"
+require "spec_helper"
+require "support/dummy/config/environment"
 require "rspec/rails"
-
-RSpec.configure do |_config|
-end

@@ -1,8 +1,9 @@
-require 'lograge'
-require 'act-fluent-logger-rails'
+# frozen_string_literal: true
+require "lograge"
+require "act-fluent-logger-rails"
 
-require 'hubrise_initializer/version'
-require 'hubrise_initializer/lograge'
+require "hubrise_initializer/version"
+require "hubrise_initializer/lograge"
 
 class HubriseInitializer
   class << self
@@ -25,16 +26,16 @@ class HubriseInitializer
       Rails.application.configure do
         config.lograge.base_controller_class = %w[ActionController::API ActionController::Base]
 
-        if log_level = ENV['RAILS_LOG_LEVEL']
+        if (log_level = ENV["RAILS_LOG_LEVEL"])
           config.log_level = log_level
         end
 
-        case ENV['RAILS_LOGGER']
-        when 'stdout'
+        case ENV["RAILS_LOGGER"]
+        when "stdout"
           # Log to STDOUT (docker-compose)
           config.logger = ActiveSupport::Logger.new(STDOUT)
 
-        when 'fluentd'
+        when "fluentd"
           # Log to fluentd (kubernetes)
           # ENV['FLUENTD_URL'] is used internally by this logger
           config.logger = ActFluentLoggerRails::Logger.new
@@ -46,12 +47,12 @@ class HubriseInitializer
           config.lograge.custom_options = lambda { |event| HubriseInitializer::Lograge.custom_options(event) }
           config.lograge.custom_payload { |controller| HubriseInitializer::Lograge.custom_payload(controller) }
 
-          if ENV['RAILS_LOGRAGE_SQL'] == 'true'
-            require 'lograge/sql'
-            require 'lograge/sql/extension'
+          if ENV["RAILS_LOGRAGE_SQL"] == "true"
+            require "lograge/sql"
+            require "lograge/sql/extension"
           end
 
-        else
+        else # rubocop:disable Style/EmptyElse
           # Log to a file (Rails default)
         end
       end
@@ -59,19 +60,19 @@ class HubriseInitializer
 
     def configure_delayed_job_logger
       Rails.application.configure do
-        case ENV['RAILS_LOGGER']
-        when 'stdout'
+        Delayed::Worker.logger = case ENV["RAILS_LOGGER"]
+        when "stdout"
           # Log to STDOUT (docker-compose)
-          Delayed::Worker.logger = ActiveSupport::Logger.new(STDOUT)
+          ActiveSupport::Logger.new(STDOUT)
 
-        when 'fluentd'
+        when "fluentd"
           # Log to fluentd (kubernetes)
           # ENV['FLUENTD_URL'] is used internally by this logger
-          Delayed::Worker.logger = ActFluentLoggerRails::Logger.new
+          ActFluentLoggerRails::Logger.new
 
         else
           # Log to a file
-          Delayed::Worker.logger = ActiveSupport::Logger.new(File.join(Rails.root, 'log', 'delayed_job.log'))
+          ActiveSupport::Logger.new(File.join(Rails.root, "log", "delayed_job.log"))
         end
       end
     end
@@ -79,12 +80,12 @@ class HubriseInitializer
     def configure_web_console
       Rails.application.configure do
         # web_console is generally enabled on dev only
-        return if !config.respond_to?(:web_console)
+        return unless config.respond_to?(:web_console)
 
         # - 172.0.0.0/8: host in docker-compose
         # - 192.168.0.0/16: inter containers network in docker-compose
         # - 10.244.0.0/16: pod networks in Kubernetes
-        config.web_console.whitelisted_ips = ['172.0.0.0/8', '192.168.0.0/16', '10.0.0.0/8']
+        config.web_console.whitelisted_ips = ["172.0.0.0/8", "192.168.0.0/16", "10.0.0.0/8"]
       end
     end
   end

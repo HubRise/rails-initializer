@@ -8,25 +8,28 @@ class HubriseInitializer
 
       def custom_payload(controller)
         request = controller.request
+        request_headers = process_request_headers(request)
         response = controller.response
+
         {
           release: ENV["RELEASE"],
           host: request.host,
           ip: request.ip,
-          user_agent: request.user_agent,
+          access_token: request_headers["X-Access-Token"], # For the API
           params: request.query_string.presence,
-        }.merge(
-          if ENV["RAILS_LOGRAGE_QUERY"] == "true"
-            {
-              request_headers: process_request_headers(request).to_s,
-              request_body: truncate_body(switch_to_utf8(request.raw_post)),
-              response_headers: response.headers.to_h.to_s,
-              response_body: truncate_body(switch_to_utf8(response.body)),
-            }
-          else
-            {}
-          end
-        )
+        }.compact
+          .merge(
+            if ENV["RAILS_LOGRAGE_QUERY"] == "true"
+              {
+                request_headers: request_headers.to_s,
+                request_body: truncate_body(switch_to_utf8(request.raw_post)),
+                response_headers: response.headers.to_h.to_s,
+                response_body: truncate_body(switch_to_utf8(response.body)),
+              }
+            else
+              {}
+            end
+          )
       end
 
       private

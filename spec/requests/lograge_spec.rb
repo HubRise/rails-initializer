@@ -57,6 +57,7 @@ describe HubriseInitializer, type: :request do
         "release" => "9.9.9",
         "host" => "www.example.com",
         "params" => "foo=fooX",
+        "access_token" => "secret_token",
         "request_body" => "body=bodyX",
         "response_body" => { result: "All good!" }.to_json,
       }

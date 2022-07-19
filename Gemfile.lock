@@ -1,12 +1,11 @@
 PATH
   remote: .
   specs:
-    hubrise_initializer (1.0.0)
+    hubrise_initializer (1.0.1)
       act-fluent-logger-rails (~> 0.6)
       lograge (~> 0.11)
       lograge-sql
       logstash-event (~> 1.2)
-      rspec
 
 GEM
   remote: https://rubygems.org/
@@ -211,6 +210,7 @@ PLATFORMS
 DEPENDENCIES
   hubrise_initializer!
   rails (~> 6.0)
+  rspec
   rspec-rails (~> 5.0)
   rubocop (= 0.81.0)
   webmock

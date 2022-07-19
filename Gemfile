@@ -2,6 +2,7 @@
 source "https://rubygems.org"
 
 gem "rails", "~> 6.0"
+gem "rspec"
 gem "rspec-rails", "~> 5.0"
 gem "hubrise_initializer", path: "."
 

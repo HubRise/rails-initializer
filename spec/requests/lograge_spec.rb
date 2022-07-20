@@ -41,7 +41,7 @@ describe HubriseInitializer, type: :request do
   end
 
   describe "when the action responds 200" do
-    subject { post("/ok?foo=fooX", params: { body: "bodyX" }, headers: { "X-Access-Token" => "secret_token" }) }
+    subject { post("/ok?foo=fooX", params: { body: "bodyX" }, headers: { "X-Access-Token" => "accessTokenX" }) }
 
     it "responds 200" do
       subject
@@ -57,7 +57,9 @@ describe HubriseInitializer, type: :request do
         "release" => "9.9.9",
         "host" => "www.example.com",
         "params" => "foo=fooX",
-        "access_token" => "secret_token",
+        "access_token" => "accessTokenX",
+        "account_name" => "accountNameX",
+        "account_id" => "accountIdX",
         "request_body" => "body=bodyX",
         "response_body" => { result: "All good!" }.to_json,
       }

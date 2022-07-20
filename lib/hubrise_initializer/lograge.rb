@@ -1,4 +1,6 @@
 # frozen_string_literal: true
+require_relative "../hubrise_initializer"
+
 class HubriseInitializer
   class Lograge
     class << self
@@ -8,20 +10,19 @@ class HubriseInitializer
 
       def custom_payload(controller)
         request = controller.request
-        request_headers = process_request_headers(request)
         response = controller.response
+        extra = controller.request.env[HubriseInitializer::LOGRAGE_INFO_ENV] || {}
 
         {
           release: ENV["RELEASE"],
           host: request.host,
           ip: request.ip,
-          access_token: request_headers["X-Access-Token"], # For the API
           params: request.query_string.presence,
-        }.compact
+        }.merge(extra)
           .merge(
             if ENV["RAILS_LOGRAGE_QUERY"] == "true"
               {
-                request_headers: request_headers.to_s,
+                request_headers: process_request_headers(request).to_s,
                 request_body: truncate_body(switch_to_utf8(request.raw_post)),
                 response_headers: response.headers.to_h.to_s,
                 response_body: truncate_body(switch_to_utf8(response.body)),

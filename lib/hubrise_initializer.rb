@@ -20,6 +20,10 @@ class HubriseInitializer
       end
     end
 
+    def lograge_info(controller, details)
+      (controller.request.env[LOGRAGE_INFO_ENV] ||= {}).merge!(details)
+    end
+
     private
 
     def configure_logger
@@ -89,4 +93,6 @@ class HubriseInitializer
       end
     end
   end
+
+  LOGRAGE_INFO_ENV = "rails-initializer-lograge-info"
 end

@@ -46,7 +46,9 @@ To upload the latest version to RubyGems.org:
 
 2. Tag the repository:
 ```bash
-VERSION=1.0.0
+bundle install
+VERSION=1.0.3
+git add Gemfile.lock
 git add lib/hubrise_initializer/version.rb
 git commit -m "Version $VERSION"
 git tag v$VERSION
@@ -60,4 +62,5 @@ git push
 rm -f hubrise_initializer-*.gem
 gem build hubrise_initializer
 gem push hubrise_initializer-*.gem
+rm -f hubrise_initializer-*.gem
 ``` 

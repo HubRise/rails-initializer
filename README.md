@@ -11,7 +11,7 @@ gem 'hubrise_initializer'
 
 In `config/application.rb`:
 ```
-HubriseInitializer.configure(:logger, :delayed_job_logger, :web_console)
+HubriseInitializer.configure(:logger, :web_console)
 ```
 
 ## Configuration
@@ -47,7 +47,7 @@ To upload the latest version to RubyGems.org:
 2. Tag the repository:
 ```bash
 bundle install
-VERSION=1.0.3
+VERSION=1.0.4
 git add Gemfile.lock
 git add lib/hubrise_initializer/version.rb
 git commit -m "Version $VERSION"

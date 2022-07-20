@@ -12,8 +12,6 @@ class HubriseInitializer
         case initializer
         when :logger
           configure_logger
-        when :delayed_job_logger
-          configure_delayed_job_logger
         when :web_console
           configure_web_console
         end
@@ -60,23 +58,22 @@ class HubriseInitializer
           # Log to a file (Rails default)
         end
       end
+
+      if defined?(ActiveJob)
+        configure_active_job_logger
+      end
     end
 
-    def configure_delayed_job_logger
+    def configure_active_job_logger
       Rails.application.configure do
-        Delayed::Worker.logger = case ENV["RAILS_LOGGER"]
-        when "stdout"
-          # Log to STDOUT (docker-compose)
+        ActiveJob::Base.logger = case ENV["RAILS_LOGGER"]
+        when "stdout", "fluentd"
+          # Do not send ActiveJobs logs to fluentd as this would create new Elasticsearch entries detached from the
+          # request.
           ActiveSupport::Logger.new(STDOUT)
 
-        when "fluentd"
-          # Log to fluentd (kubernetes)
-          # ENV['FLUENTD_URL'] is used internally by this logger
-          ActFluentLoggerRails::Logger.new
-
         else
-          # Log to a file
-          ActiveSupport::Logger.new(File.join(Rails.root, "log", "delayed_job.log"))
+          ActiveSupport::Logger.new(File.join(Rails.root, "log", "active_job.log"))
         end
       end
     end

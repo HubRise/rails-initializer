@@ -65,7 +65,7 @@ class HubriseInitializer
     end
 
     def configure_active_job_logger
-      Rails.application.configure do
+      Rails.application.initializer("hubrise_initializer.active_job.logger", after: "active_job.logger") do
         ActiveJob::Base.logger = case ENV["RAILS_LOGGER"]
         when "stdout", "fluentd"
           # Do not send ActiveJobs logs to fluentd as this would create new Elasticsearch entries detached from the

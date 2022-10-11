@@ -16,6 +16,8 @@ describe HubriseInitializer, type: :request do
     fluent_logger
   end
 
+  let(:expected_level) { "INFO" }
+
   RSpec.shared_examples("sends expected_message with expected_level to fluentd") do
     it "calls #info on the logger" do
       expect(Rails.application.config.logger).to receive(:info).with(-> (message) do
@@ -48,7 +50,6 @@ describe HubriseInitializer, type: :request do
       expect(response).to have_http_status(200)
     end
 
-    let(:expected_level) { "INFO" }
     let(:expected_message) do
       {
         "method" => "POST",
@@ -68,6 +69,23 @@ describe HubriseInitializer, type: :request do
     include_examples "sends expected_message with expected_level to fluentd"
   end
 
+  describe "when the body is not UTF-8 encoded" do
+    subject { get("/image") }
+
+    it "responds 200" do
+      subject
+      expect(response).to have_http_status(200)
+    end
+
+    let(:expected_message) do
+      {
+        "response_body" => a_string_matching(/Binary \(\d* bytes\)/),
+      }
+    end
+
+    include_examples "sends expected_message with expected_level to fluentd"
+  end
+
   describe "when the action does not exist" do
     subject { get("/invalid_url") }
 
@@ -76,7 +94,6 @@ describe HubriseInitializer, type: :request do
       expect(response).to have_http_status(404)
     end
 
-    let(:expected_level) { "INFO" }
     let(:expected_message) do
       {
         "method" => "GET",

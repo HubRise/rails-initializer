@@ -6,6 +6,14 @@ class ApplicationController < ActionController::Base
     render(json: { result: "All good!" }, status: 200)
   end
 
+  def image
+    send_file(
+      Rails.root.join("app", "assets", "monster.png"),
+      type: "image/jpeg",
+      disposition: "inline",
+    )
+  end
+
   def invalid_url
     head(404)
   end

@@ -41,10 +41,12 @@ class HubriseInitializer
       def switch_to_utf8(s)
         return unless s
 
-        return s if s.encoding == Encoding::UTF_8
-
-        s_utf_8 = s.dup.force_encoding(Encoding::UTF_8)
-        return s_utf_8 if s_utf_8.valid_encoding?
+        if s.encoding == Encoding::UTF_8
+          return s if s.valid_encoding?
+        else
+          s_utf_8 = s.dup.force_encoding(Encoding::UTF_8)
+          return s_utf_8 if s_utf_8.valid_encoding?
+        end
 
         # Fallback for binary data
         "Binary (#{s.size} bytes)"

@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    hubrise_initializer (1.0.5)
+    hubrise_initializer (1.0.6)
       act-fluent-logger-rails (~> 0.6)
       lograge (~> 0.11)
       lograge-sql
@@ -110,7 +110,7 @@ GEM
     mini_mime (1.1.2)
     mini_portile2 (2.8.0)
     minitest (5.16.2)
-    msgpack (1.5.3)
+    msgpack (1.6.0)
     nio4r (2.5.8)
     nokogiri (1.13.7)
       mini_portile2 (~> 2.8.0)

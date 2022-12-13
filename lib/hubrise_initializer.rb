@@ -86,7 +86,7 @@ class HubriseInitializer
         # - 172.0.0.0/8: host in docker-compose
         # - 192.168.0.0/16: inter containers network in docker-compose
         # - 10.244.0.0/16: pod networks in Kubernetes
-        config.web_console.whitelisted_ips = ["172.0.0.0/8", "192.168.0.0/16", "10.0.0.0/8"]
+        config.web_console.allowed_ips = ["172.0.0.0/8", "192.168.0.0/16", "10.0.0.0/8"]
       end
     end
   end

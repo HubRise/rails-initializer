@@ -19,19 +19,21 @@ Layout/LineLength:
   Exclude:
     - 'db/migrate*/**/*'
     - 'spec/**/*'
+    - 'bridges/**/spec/**/*'
   AllowHeredoc: true
   AllowURI: true
   URISchemes:
     - http
     - https
   IgnoreCopDirectives: false
-  IgnoredPatterns:
+  AllowedPatterns:
     - '\A\s*(remote_)?test(_\w+)?\s.*(do|->)(\s|\Z)'
+    - '\A\s*#'
 
 Style/MethodCallWithArgsParentheses:
   Enabled: true
   IgnoreMacros: true
-  IgnoredMethods:
+  AllowedMethods:
     - require
     - require_relative
     - require_dependency
@@ -111,7 +113,7 @@ Style/BlockDelimiters:
     - let!
     - subject
     - watch
-  IgnoredMethods:
+  AllowedMethods:
     - lambda
     - proc
     - it
@@ -460,7 +462,7 @@ Layout/SpaceInsideStringInterpolation:
     - no_space
 
 Style/SymbolProc:
-  IgnoredMethods:
+  AllowedMethods:
     - respond_to
     - define_method
 
@@ -668,7 +670,7 @@ Style/LineEndConcatenation:
 Style/MethodCallWithoutArgsParentheses:
   Enabled: true
 
-Style/MethodMissingSuper:
+Lint/MissingSuper:
   Enabled: true
 
 Style/MissingRespondToMissing:
@@ -800,7 +802,7 @@ Layout/SpaceInsideRangeLiteral:
 Style/SymbolLiteral:
   Enabled: true
 
-Layout/Tab:
+Layout/IndentationStyle:
   Enabled: true
 
 Layout/TrailingWhitespace:
@@ -831,7 +833,7 @@ Style/ZeroLengthPredicate:
   Enabled: true
 
 Layout/HeredocIndentation:
-  EnforcedStyle: squiggly
+  Enabled: true
 
 Lint/AmbiguousOperator:
   Enabled: true
@@ -957,7 +959,7 @@ Lint/UselessAccessModifier:
 Lint/UselessAssignment:
   Enabled: true
 
-Lint/UselessComparison:
+Lint/BinaryOperatorWithIdenticalOperands:
   Enabled: true
 
 Lint/UselessElseWithoutRescue:

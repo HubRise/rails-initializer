@@ -2,6 +2,7 @@
 require "lograge"
 require "act-fluent-logger-rails"
 
+require "act_fluent_logger_rails/logger_with_options"
 require "hubrise_initializer/version"
 require "hubrise_initializer/lograge"
 

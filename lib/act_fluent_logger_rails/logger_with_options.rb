@@ -13,6 +13,7 @@ module ActFluentLoggerRails
 
       # Rebuild Fluent Logger with custom options
       logger_opts = default_logger_options(options).merge(
+        # Keep running when fluent is down
         use_nonblock: true
       )
       @fluent_logger = ::Fluent::Logger::FluentLogger.new(nil, logger_opts)

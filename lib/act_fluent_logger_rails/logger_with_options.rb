@@ -3,7 +3,7 @@
 module ActFluentLoggerRails
   class LoggerWithOptions
     def self.new(**kwargs)
-      Logger.new(kwargs)
+      Logger.new(**kwargs)
     end
   end
 

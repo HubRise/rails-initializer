@@ -40,7 +40,7 @@ class HubriseInitializer
         when "fluentd"
           # Log to fluentd (kubernetes)
           # ENV['FLUENTD_URL'] is used internally by this logger
-          config.logger = ActFluentLoggerRails::Logger.new
+          config.logger = ActFluentLoggerRails::ResilientLogger.new
 
           config.lograge.enabled = true
           config.lograge.formatter = ::Lograge::Formatters::Json.new

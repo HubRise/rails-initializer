@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
 module ActFluentLoggerRails
-  class LoggerWithOptions
+  # This module does nothing more than ActFluentLoggerRails::Logger.
+  # It's just here to make our FluentLoggerExtension more visible from the Rails config file.
+  module LoggerWithOptions
     def self.new(**kwargs)
       Logger.new(**kwargs)
     end

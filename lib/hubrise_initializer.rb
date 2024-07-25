@@ -2,6 +2,7 @@
 require "lograge"
 require "act-fluent-logger-rails"
 
+require "act_fluent_logger_rails/logger_with_options"
 require "hubrise_initializer/version"
 require "hubrise_initializer/lograge"
 
@@ -40,7 +41,7 @@ class HubriseInitializer
         when "fluentd"
           # Log to fluentd (kubernetes)
           # ENV['FLUENTD_URL'] is used internally by this logger
-          config.logger = ActFluentLoggerRails::Logger.new
+          config.logger = ActFluentLoggerRails::LoggerWithOptions.new
 
           config.lograge.enabled = true
           config.lograge.formatter = ::Lograge::Formatters::Json.new

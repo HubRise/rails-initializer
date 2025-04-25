@@ -40,7 +40,16 @@ class HubriseInitializer
         when "fluentd"
           # Log to fluentd (kubernetes)
           # ENV['FLUENTD_URL'] is used internally by this logger
-          config.logger = ActFluentLoggerRails::Logger.new
+          config.logger = ActFluentLoggerRails::Logger.new(
+            settings: {
+              # AM 25/4/2025: it's critical to make logging non-blocking so that an ElasticSearch outage does not block
+              # the application.
+              # See https://docs.google.com/document/d/1fL7PYC2Vb_eqlbUGYWZ7ZvLvX_o821LL1QZxBM_xjXc/edit?tab=t.0
+              use_nonblock: true,          # default: false  – makes writes non-blocking
+              wait_writeable: false,       # default: true   – skip IO.select; drop on EAGAIN
+              # End of AM 25/4/2025
+            }
+          )
 
           config.lograge.enabled = true
           config.lograge.formatter = ::Lograge::Formatters::Json.new

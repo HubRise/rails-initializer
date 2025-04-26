@@ -28,7 +28,7 @@ describe HubriseInitializer, type: :request do
     end
 
     it "calls fluent_logger.post" do
-      expect(fluent_logger).to receive(:post).with(nil, -> (map) do
+      expect(fluent_logger).to receive(:post).with("rails.dummy", -> (map) do
         expect(map[:severity]).to eq(expected_level)
         expect(map[:messages].size).to eq(1)
         parsed_message = JSON.parse(map[:messages].first)

@@ -25,6 +25,8 @@ class HubriseInitializer
     private
 
     def configure_logger
+      settings = fluent_settings # Private method, cannot be called within Rails.application.configure
+
       Rails.application.configure do
         config.lograge.base_controller_class = %w[ActionController::API ActionController::Base]
 
@@ -39,17 +41,7 @@ class HubriseInitializer
 
         when "fluentd"
           # Log to fluentd (kubernetes)
-          # ENV['FLUENTD_URL'] is used internally by this logger
-          config.logger = ActFluentLoggerRails::Logger.new(
-            settings: {
-              # AM 25/4/2025: it's critical to make logging non-blocking so that an ElasticSearch outage does not block
-              # the application.
-              # See https://docs.google.com/document/d/1fL7PYC2Vb_eqlbUGYWZ7ZvLvX_o821LL1QZxBM_xjXc/edit?tab=t.0
-              use_nonblock: true,          # default: false  – makes writes non-blocking
-              wait_writeable: false,       # default: true   – skip IO.select; drop on EAGAIN
-              # End of AM 25/4/2025
-            }
-          )
+          config.logger = ActFluentLoggerRails::Logger.new(settings:)
 
           config.lograge.enabled = true
           config.lograge.formatter = ::Lograge::Formatters::Json.new
@@ -97,6 +89,21 @@ class HubriseInitializer
         # - 10.244.0.0/16: pod networks in Kubernetes
         config.web_console.allowed_ips = ["172.0.0.0/8", "192.168.0.0/16", "10.0.0.0/8"]
       end
+    end
+
+    def fluent_settings
+      fluent_config = ActFluentLoggerRails::Logger.parse_url(ENV["FLUENTD_URL"])
+      {
+        tag: fluent_config["tag"],
+        host: fluent_config["fluent_host"],
+        port: fluent_config["fluent_port"],
+        messages_type: fluent_config["messages_type"],
+        severity_key: :severity,
+        # AM 25/4/2025: make logging non-blocking so that an ElasticSearch outage does not block the application.
+        # See https://docs.google.com/document/d/1fL7PYC2Vb_eqlbUGYWZ7ZvLvX_o821LL1QZxBM_xjXc
+        use_nonblock: true,          # default: false  – makes writes non-blocking
+        wait_writeable: false,       # default: true   – skip IO.select; drop on EAGAIN
+      }
     end
   end
 

@@ -25,8 +25,6 @@ class HubriseInitializer
     private
 
     def configure_logger
-      settings = fluent_settings # Private method, cannot be called within Rails.application.configure
-
       Rails.application.configure do
         config.lograge.base_controller_class = %w[ActionController::API ActionController::Base]
 
@@ -41,7 +39,7 @@ class HubriseInitializer
 
         when "fluentd"
           # Log to fluentd (kubernetes)
-          config.logger = ActFluentLoggerRails::Logger.new(settings:)
+          config.logger = ActFluentLoggerRails::Logger.new(settings: HubriseInitializer.fluent_settings)
 
           config.lograge.enabled = true
           config.lograge.formatter = ::Lograge::Formatters::Json.new
@@ -91,8 +89,11 @@ class HubriseInitializer
       end
     end
 
-    def fluent_settings
+    # Must be public to be callable within Rails.application.configure
+    public def fluent_settings
+      raise "ENV['FLUENTD_URL'] must be set when ENV['RAILS_LOGGER'] is fluentd" unless ENV["FLUENTD_URL"]
       fluent_config = ActFluentLoggerRails::Logger.parse_url(ENV["FLUENTD_URL"])
+
       {
         tag: fluent_config["tag"],
         host: fluent_config["fluent_host"],

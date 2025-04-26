@@ -104,6 +104,7 @@ class HubriseInitializer
         # See https://docs.google.com/document/d/1fL7PYC2Vb_eqlbUGYWZ7ZvLvX_o821LL1QZxBM_xjXc
         use_nonblock: true,          # default: false  – makes writes non-blocking
         wait_writeable: false,       # default: true   – skip IO.select; drop on EAGAIN
+        buffer_overflow_handler: -> (messages) { puts "Buffer overflow: #{messages.size} messages dropped" },
       }
     end
   end

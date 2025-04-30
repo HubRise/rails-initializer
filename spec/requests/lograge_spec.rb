@@ -2,7 +2,7 @@
 require "spec_helper"
 require "fluent-logger"
 
-RSpec.fdescribe(HubriseInitializer, type: :request) do
+RSpec.describe(HubriseInitializer, type: :request) do
   around do |ex|
     with_dummy(
       "FLUENTD_URL" => "http://www.example.com/rails.dummy?messages_type=array&severity_key=level",

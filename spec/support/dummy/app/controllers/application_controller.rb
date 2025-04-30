@@ -18,6 +18,11 @@ class ApplicationController < ActionController::Base
     head(404)
   end
 
+  def log_test
+    Rails.logger.info("This is a test log message for Fluentd.")
+    render(plain: "Logged!")
+  end
+
   protected
 
   def lograge_info

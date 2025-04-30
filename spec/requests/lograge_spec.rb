@@ -1,8 +1,18 @@
 # frozen_string_literal: true
-require "rails_helper"
+require "spec_helper"
 require "fluent-logger"
 
-describe HubriseInitializer, type: :request do
+RSpec.fdescribe(HubriseInitializer, type: :request) do
+  around do |ex|
+    with_dummy(
+      "FLUENTD_URL" => "http://www.example.com/rails.dummy?messages_type=array&severity_key=level",
+      "RAILS_LOGGER" => "fluentd"
+    ) do
+      require "rspec/rails"
+      ex.run
+    end
+  end
+
   let!(:fluent_logger) do
     fluent_logger = double
     allow(fluent_logger).to receive(:post)

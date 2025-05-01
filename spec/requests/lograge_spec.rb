@@ -1,18 +1,8 @@
 # frozen_string_literal: true
-require "spec_helper"
+require "rails_helper"
 require "fluent-logger"
 
 RSpec.describe(HubriseInitializer, type: :request) do
-  around do |ex|
-    with_dummy(
-      "FLUENTD_URL" => "http://www.example.com/rails.dummy?messages_type=array&severity_key=level",
-      "RAILS_LOGGER" => "fluentd"
-    ) do
-      require "rspec/rails"
-      ex.run
-    end
-  end
-
   let!(:fluent_logger) do
     fluent_logger = double
     allow(fluent_logger).to receive(:post)
@@ -38,7 +28,7 @@ RSpec.describe(HubriseInitializer, type: :request) do
     end
 
     it "calls fluent_logger.post" do
-      expect(fluent_logger).to receive(:post).with("rails.dummy", -> (map) do
+      expect(fluent_logger).to receive(:post).with("test.fluentd", -> (map) do
         expect(map[:severity]).to eq(expected_level)
         expect(map[:messages].size).to eq(1)
         parsed_message = JSON.parse(map[:messages].first)

@@ -5,6 +5,9 @@ require "act-fluent-logger-rails"
 require "hubrise_initializer/version"
 require "hubrise_initializer/lograge"
 
+require "monkey_patch/act_fluent_logger_rails"
+require "monkey_patch/fluent_logger"
+
 class HubriseInitializer
   class << self
     def configure(*initializers)
@@ -39,7 +42,7 @@ class HubriseInitializer
 
         when "fluentd"
           # Log to fluentd (kubernetes)
-          config.logger = ActFluentLoggerRails::Logger.new(settings: HubriseInitializer.fluent_settings)
+          config.logger = ActFluentLoggerRails::Logger.new(settings: HubriseInitializer.act_fluent_logger_settings)
 
           config.lograge.enabled = true
           config.lograge.formatter = ::Lograge::Formatters::Json.new
@@ -65,15 +68,16 @@ class HubriseInitializer
 
     def configure_active_job_logger
       Rails.application.initializer("hubrise_initializer.active_job.logger", after: "active_job.logger") do
-        ActiveJob::Base.logger = case ENV["RAILS_LOGGER"]
-        when "stdout", "fluentd"
-          # Do not send ActiveJobs logs to fluentd as this would create new Elasticsearch entries detached from the
-          # request.
-          ActiveSupport::Logger.new(STDOUT)
+        ActiveJob::Base.logger =
+          case ENV["RAILS_LOGGER"]
+          when "stdout", "fluentd"
+            # Do not send ActiveJobs logs to fluentd as this would create new Elasticsearch entries detached from the
+            # request.
+            ActiveSupport::Logger.new(STDOUT)
 
-        else
-          ActiveSupport::Logger.new(File.join(Rails.root, "log", "active_job.log"))
-        end
+          else
+            ActiveSupport::Logger.new(File.join(Rails.root, "log", "active_job.log"))
+          end
       end
     end
 
@@ -90,7 +94,7 @@ class HubriseInitializer
     end
 
     # Must be public to be callable within Rails.application.configure
-    public def fluent_settings
+    public def act_fluent_logger_settings
       raise "ENV['FLUENTD_URL'] must be set when ENV['RAILS_LOGGER'] is fluentd" unless ENV["FLUENTD_URL"]
       fluent_config = ActFluentLoggerRails::Logger.parse_url(ENV["FLUENTD_URL"])
 
@@ -100,11 +104,6 @@ class HubriseInitializer
         port: fluent_config["fluent_port"],
         messages_type: fluent_config["messages_type"],
         severity_key: :severity,
-        # AM 25/4/2025: make logging non-blocking so that an ElasticSearch outage does not block the application.
-        # See https://docs.google.com/document/d/1fL7PYC2Vb_eqlbUGYWZ7ZvLvX_o821LL1QZxBM_xjXc
-        use_nonblock: true,          # default: false  – makes writes non-blocking
-        wait_writeable: false,       # default: true   – skip IO.select; drop on EAGAIN
-        buffer_overflow_handler: -> (messages) { puts "Buffer overflow: #{messages.size} messages dropped" },
       }
     end
   end

@@ -1,77 +1,88 @@
 # frozen_string_literal: true
-
-require "socket"
-require "msgpack"
+require "rails_helper"
 require "timeout"
-require "spec_helper"
-require "support/dummy_boot"
 
 RSpec.describe("Fluent logging", type: :request) do
-  around do |example|
-    with_dummy("FLUENTD_URL" => "http://127.0.0.1:24225/test.fluentd?dummy=true",
-               "RAILS_LOGGER" => "fluentd") do
-      require "rspec/rails"
-      example.run
+  let(:tcp_mock) { RSpec.configuration.tcp_mock }
+  before { tcp_mock.reset! }
+
+  def expect_messages_received(timeout: 1)
+    deadline = Process.clock_gettime(Process::CLOCK_MONOTONIC) + timeout
+    loop do
+      break if yield(tcp_mock.received_messages)
+      if Process.clock_gettime(Process::CLOCK_MONOTONIC) >= deadline
+        expect(false).to be(true), "Expected messages not received within #{timeout}s.\n" \
+          "Received: #{tcp_mock.received_messages.inspect}"
+      end
+      sleep 0.1
     end
   end
 
-  before(:all) do
-    @received_records = []
-
-    @mock_server = TCPServer.new("127.0.0.1", 24225)
-    @mock_thread = Thread.new do
-      loop do
-        client = @mock_server.accept
-        unpacker = MessagePack::Factory.new.unpacker(client)
-
-        # Custom ext type (0) → Time object
-        unpacker.register_type(0) do |data|
-          sec, nsec = data.unpack("NN")
-          Time.at(sec, nsec / 1_000.0)
-        end
-
-        begin
-          unpacker.each { |record| @received_records << record }
-        rescue EOFError, IOError, Errno::ECONNRESET
-        ensure
-          client.close unless client.closed?
-        end
-      rescue IOError # server closed
+  def expect_no_messages_received(timeout: 1)
+    deadline = Process.clock_gettime(Process::CLOCK_MONOTONIC) + timeout
+    loop do
+      break if Process.clock_gettime(Process::CLOCK_MONOTONIC) >= deadline
+      if tcp_mock.received_messages.any?
+        expect(tcp_mock.received_messages).to be_empty, "Expected no messages but received: #{tcp_mock.received_messages.inspect}"
         break
       end
+      sleep 0.1
     end
-
-    sleep 0.2 # give the server a moment to bind
-  end
-
-  after(:all) do
-    @mock_server&.close
-    @mock_thread&.kill&.join
   end
 
   it "sends logs to fluentd when calling an endpoint that logs" do
-    @received_records.clear
-
-    get("/log_test")
+    get("/fluent_log")
     expect(response).to have_http_status(:ok)
 
-    expected_message = "This is a test log message for Fluentd."
-    message_received = false
-
-    Timeout.timeout(3) do
-      until message_received
-        message_received = @received_records.any? do |record|
-          data = record[2]
-          data.is_a?(Hash) && Array(data["messages"]).include?(expected_message)
-        end
-        sleep(0.1) unless message_received
-      end
+    expect_messages_received do |messages|
+      messages.size > 0 && messages[0][2]["messages"][0] == "This is a test log message for Fluentd."
     end
+  end
 
-    expect(message_received).to be(true),
-                                "Expected log message '#{expected_message}' was not received"
-  rescue Timeout::Error
-    warn("[fluent_logging_spec] Timeout waiting for log message. Received: #{@received_records.inspect}")
-    raise
+  it "can send long logs to fluentd" do
+    get("/fluent_100_logs")
+    expect(response).to have_http_status(:ok)
+
+    expect_messages_received do |messages|
+      messages.size > 0 && messages[0][2]["messages"].size == 100
+    end
+  end
+
+  it "can log 10MB of data" do
+    get("/fluent_10mb_log")
+    expect(response).to have_http_status(:ok)
+
+    expect_messages_received do |messages|
+      messages.size == 1
+    end
+  end
+
+  context "when the Fluent connection drops" do
+    it "does not block the Rails request" do
+      tcp_mock.drop_connections!
+
+      elapsed = Benchmark.realtime { get("/fluent_log") }
+      expect(response).to have_http_status(:ok)
+      expect(elapsed).to be < 0.5
+
+      expect_no_messages_received
+    end
+  end
+
+  context "when Fluent stops consuming but stays connected" do
+    it "does not block the Rails request, even for long logs" do
+      tcp_mock.pause!
+
+      begin
+        Timeout.timeout(1) do
+          get("/fluent_10mb_log")
+        end
+      rescue Timeout::Error
+        fail "Request timed out"
+      end
+
+      expect(response).to have_http_status(:ok)
+      expect_no_messages_received
+    end
   end
 end

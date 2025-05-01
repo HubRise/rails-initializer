@@ -18,6 +18,22 @@ class ApplicationController < ActionController::Base
     head(404)
   end
 
+  def fluent_log
+    Rails.logger.info("This is a test log message for Fluentd.")
+    head(200)
+  end
+
+  def fluent_100_logs
+    # Rails logs 1 additional message at the end of the request
+    99.times { Rails.logger.info("A" * 100) }
+    head(200)
+  end
+
+  def fluent_10mb_log
+    Rails.logger.info("A" * 10_000_000)
+    head(200)
+  end
+
   protected
 
   def lograge_info

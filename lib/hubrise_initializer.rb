@@ -45,7 +45,7 @@ class HubriseInitializer
           config.lograge.enabled = true
           config.lograge.formatter = ::Lograge::Formatters::Json.new
 
-          config.lograge.ignore_actions = ["HealthCheck::HealthCheckController#index"]
+          config.lograge.ignore_actions = ["Rails::HealthController#show"]
           config.lograge.custom_options = lambda { |event| HubriseInitializer::Lograge.custom_options(event) }
           config.lograge.custom_payload { |controller| HubriseInitializer::Lograge.custom_payload(controller) }
 
